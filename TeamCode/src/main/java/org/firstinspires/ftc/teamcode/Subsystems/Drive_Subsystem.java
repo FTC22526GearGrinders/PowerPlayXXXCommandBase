@@ -32,8 +32,8 @@ public class Drive_Subsystem extends SubsystemBase {
     public double distError;
 
 
-    double wheelWidth = Constants.DriveConstants.WHEELWIDTH;
-    double trackWidth = Constants.DriveConstants.TRACKWIDTH;
+    double wheelWidth   = Constants.DriveConstants.WHEELWIDTH;
+    double trackWidth= Constants.DriveConstants.TRACKWIDTH;
     // Locations of the wheels relative to the robot center.
     Translation2d m_frontLeftLocation =
             new Translation2d(wheelWidth / 2, trackWidth / 2);
@@ -120,10 +120,10 @@ public class Drive_Subsystem extends SubsystemBase {
     public Drive_Subsystem(CommandOpMode opMode) {
         myOpmode = opMode;
         runtime.reset();
-        frontleftmotor = new Motor(myOpmode.hardwareMap, "left motor", Motor.GoBILDA.RPM_435);
-        frontrightmotor = new Motor(myOpmode.hardwareMap, "right motor", Motor.GoBILDA.RPM_435);
-        backleftmotor = new Motor(myOpmode.hardwareMap, "left back", Motor.GoBILDA.RPM_435);
-        backrightmotor = new Motor(myOpmode.hardwareMap, "right back", Motor.GoBILDA.RPM_435);
+        frontleftmotor = new Motor(myOpmode.hardwareMap, "left motor", Motor.GoBILDA.RPM_312);
+        frontrightmotor = new Motor(myOpmode.hardwareMap, "right motor", Motor.GoBILDA.RPM_312);
+        backleftmotor = new Motor(myOpmode.hardwareMap, "left back", Motor.GoBILDA.RPM_312);
+        backrightmotor = new Motor(myOpmode.hardwareMap, "right back", Motor.GoBILDA.RPM_312);
         frontleftmotor.setInverted(true);
         frontrightmotor.setInverted(true);
         backleftmotor.setInverted(true);
@@ -133,6 +133,10 @@ public class Drive_Subsystem extends SubsystemBase {
         frontrightmotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         backleftmotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         backrightmotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        frontrightmotor.setDistancePerPulse(Constants.DriveConstants.ENCODER_COUNTS_PER_INCH);
+        frontleftmotor.setDistancePerPulse(Constants.DriveConstants.ENCODER_COUNTS_PER_INCH);
+        backrightmotor.setDistancePerPulse(Constants.DriveConstants.ENCODER_COUNTS_PER_INCH);
+        backleftmotor.setDistancePerPulse(Constants.DriveConstants.ENCODER_COUNTS_PER_INCH);
 
 
         m_frontLeftEncoder = frontleftmotor.encoder;
@@ -159,10 +163,11 @@ public class Drive_Subsystem extends SubsystemBase {
                         new Pose2d(0, 0, new Rotation2d()
                         )
                 );
+        runtime.reset();
 
-        leftGroup = new MotorGroup(frontleftmotor, backleftmotor);
-
-        rightGroup = new MotorGroup(frontrightmotor, backrightmotor);
+//        leftGroup = new MotorGroup(frontleftmotor, backleftmotor);
+//
+//        rightGroup = new MotorGroup(frontrightmotor, backrightmotor);
 
     }
 
@@ -254,6 +259,9 @@ public class Drive_Subsystem extends SubsystemBase {
 //
 //
         myOpmode.telemetry.addData("frontleft", m_frontLeftEncoder.getDistance());
+        myOpmode.telemetry.addData("frontleft", m_frontRightEncoder.getDistance());
+        myOpmode.telemetry.addData("frontleft", m_backRightEncoder.getDistance());
+        myOpmode.telemetry.addData("frontleft", m_backLeftEncoder.getDistance());
 //        myOpmode.telemetry.addData("api", Constants.DriveConstants.ENCODER_COUNTS_PER_INCH);
 //        myOpmode.telemetry.addData("Gyro Angle", "%.2f", getGyroHeading().getDegrees());
 ////        myOpmode.telemetry.addData("target", targetDistance);
@@ -262,7 +270,7 @@ public class Drive_Subsystem extends SubsystemBase {
 ////        //myOpmode.telemetry.addData("roterror",roterror);
 ////        // myOpmode.telemetry.addData("disterror",distError);
 ////        //myOpmode.telemetry.addData("fieldcentric",fieldCentric);
-        myOpmode.telemetry.addData("X", m_pose.getX()/1.4);
+        myOpmode.telemetry.addData("X", m_pose.getX());
         myOpmode.telemetry.addData("Y", m_pose.getY());
 //        myOpmode.telemetry.addData("RTS", runtime.seconds());
 //
