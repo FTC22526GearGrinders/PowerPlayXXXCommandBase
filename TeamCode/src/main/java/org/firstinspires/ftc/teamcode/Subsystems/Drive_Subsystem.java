@@ -14,13 +14,15 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
 import com.arcrobotics.ftclib.kinematics.Odometry;
-import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveKinematics;
-import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveOdometry;
+
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveWheelSpeeds;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.Subsystems.Odometry.MecanumDriveKinematics;
+import org.firstinspires.ftc.teamcode.Subsystems.Odometry.MecanumDriveOdometry;
+import org.firstinspires.ftc.teamcode.Subsystems.Odometry.MecanumDriveWheelPositions;
 import org.firstinspires.ftc.teamcode.Utils.SlewRateLimiter;
 
 import java.lang.reflect.Field;
@@ -30,6 +32,10 @@ public class Drive_Subsystem extends SubsystemBase {
     public boolean fieldCentric;
     public double roterror;
     public double distError;
+
+
+
+
 
 
     double wheelWidth   = Constants.DriveConstants.WHEELWIDTH;
@@ -68,6 +74,8 @@ public class Drive_Subsystem extends SubsystemBase {
             );
 
     MecanumDriveOdometry m_odometry;
+
+    public MecanumDriveWheelPositions wheelPositions;
 
 
     public MecanumDrive drive;
@@ -157,11 +165,14 @@ public class Drive_Subsystem extends SubsystemBase {
         imu.init();
         reset();
         drive = new MecanumDrive(frontleftmotor, frontrightmotor, backleftmotor, backrightmotor);
+
+        wheelPositions = new MecanumDriveWheelPositions(m_frontLeftEncoder.getDistance(),m_frontRightEncoder.getDistance(),m_backLeftEncoder.getDistance(),m_backRightEncoder.getDistance());
+
+
         m_odometry = new MecanumDriveOdometry
                 (
-                        m_kinematics, new Rotation2d(),
-                        new Pose2d(0, 0, new Rotation2d()
-                        )
+                        m_kinematics,getGyroHeading(),wheelPositions
+
                 );
         runtime.reset();
 
@@ -174,11 +185,6 @@ public class Drive_Subsystem extends SubsystemBase {
     public void periodic() {
         test++;
 
-        MecanumDriveWheelSpeeds wheelSpeeds = new MecanumDriveWheelSpeeds
-                (
-                        m_frontLeftEncoder.getRate(), -m_frontRightEncoder.getRate(),
-                        m_backLeftEncoder.getRate(), -m_backRightEncoder.getRate()
-                );
 
         // Get my wheel speeds; assume .getRate() has been
         // set up to return velocity of the encoder
@@ -186,7 +192,7 @@ public class Drive_Subsystem extends SubsystemBase {
 
 
         // Update the pose);
-        m_pose = m_odometry.updateWithTime(runtime.seconds(), getGyroHeading(), wheelSpeeds);
+        m_pose = m_odometry.update(getGyroHeading(), wheelPositions);
         //myOpmode.telemetry.addLine("Front Encoders Inches|")
         //     .addData("FL", "%.2f", wheelSpeeds.frontLeftMetersPerSecond);
         //   .addData("|FR ", "%.2f", wheelSpeeds.frontRightMetersPerSecond);
