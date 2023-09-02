@@ -12,8 +12,7 @@ import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
-import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
-import com.arcrobotics.ftclib.kinematics.Odometry;
+
 
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveWheelSpeeds;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -171,8 +170,9 @@ public class Drive_Subsystem extends SubsystemBase {
 
         m_odometry = new MecanumDriveOdometry
                 (
-                        m_kinematics,getGyroHeading(),wheelPositions
+                        m_kinematics, getGyroHeading(), wheelPositions,
 
+                        new Pose2d()
                 );
         runtime.reset();
 
