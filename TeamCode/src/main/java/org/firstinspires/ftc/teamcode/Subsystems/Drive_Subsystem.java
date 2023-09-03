@@ -74,7 +74,7 @@ public class Drive_Subsystem extends SubsystemBase {
 
     MecanumDriveOdometry m_odometry;
 
-    public MecanumDriveWheelPositions wheelPositions;
+    //public MecanumDriveWheelPositions wheelPositions;
 
 
     public MecanumDrive drive;
@@ -165,12 +165,12 @@ public class Drive_Subsystem extends SubsystemBase {
         reset();
         drive = new MecanumDrive(frontleftmotor, frontrightmotor, backleftmotor, backrightmotor);
 
-        wheelPositions = new MecanumDriveWheelPositions(m_frontLeftEncoder.getDistance(),m_frontRightEncoder.getDistance(),m_backLeftEncoder.getDistance(),m_backRightEncoder.getDistance());
+
 
 
         m_odometry = new MecanumDriveOdometry
                 (
-                        m_kinematics, getGyroHeading(), wheelPositions,
+                        m_kinematics, getGyroHeading(), new MecanumDriveWheelPositions(m_frontLeftEncoder.getDistance(),m_frontRightEncoder.getDistance(),m_backLeftEncoder.getDistance(),m_backRightEncoder.getDistance()),
 
                         new Pose2d()
                 );
@@ -186,6 +186,7 @@ public class Drive_Subsystem extends SubsystemBase {
         test++;
 
 
+        MecanumDriveWheelPositions wheelPositions = new MecanumDriveWheelPositions(m_frontLeftEncoder.getDistance(),m_frontRightEncoder.getDistance(),m_backLeftEncoder.getDistance(),m_backRightEncoder.getDistance());
         // Get my wheel speeds; assume .getRate() has been
         // set up to return velocity of the encoder
         // in meters per second.
@@ -278,7 +279,7 @@ public class Drive_Subsystem extends SubsystemBase {
 ////        //myOpmode.telemetry.addData("fieldcentric",fieldCentric);
         myOpmode.telemetry.addData("X", m_pose.getX());
         myOpmode.telemetry.addData("Y", m_pose.getY());
-//        myOpmode.telemetry.addData("RTS", runtime.seconds());
+      //  myOpmode.telemetry.addData("RTS", runtime.seconds());
 //
 //
          myOpmode.telemetry.update();
