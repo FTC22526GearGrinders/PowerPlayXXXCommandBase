@@ -19,6 +19,7 @@ public class StickObserverTest extends LinearOpMode {
         while (opModeIsActive()) {
         }
 //        stopStreaming
+
         cv.stopCamera();
     }
 }

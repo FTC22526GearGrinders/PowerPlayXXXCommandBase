@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Commands.Drive.PositionDrive;
+import org.firstinspires.ftc.teamcode.Commands.Drive.RotateToAngle;
 import org.firstinspires.ftc.teamcode.Commands.Elevator.HoldElevatorAtPosition;
 import org.firstinspires.ftc.teamcode.Commands.Elevator.PositionElevator;
 import org.firstinspires.ftc.teamcode.Commands.Utils.TimeDelay;
@@ -48,7 +49,7 @@ public class OneConeDeliverOpMode extends CommandOpMode {
                 new TimeDelay(2.5),
 
 
-               // new RotateToAngle(this.drive, 90).withTimeout(10000),
+                new RotateToAngle(this.drive, 90).withTimeout(10000),
 
                 //new InstantCommand(this.drive::reset),
 

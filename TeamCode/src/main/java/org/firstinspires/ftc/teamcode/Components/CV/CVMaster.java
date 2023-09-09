@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Components.CV;
 
 //https://youtu.be/rQjcZt6V9ac
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -18,7 +19,7 @@ public class CVMaster {
         //you can input  a hardwareMap instead of linearOpMode if you want
         op = p_op;
         //initialize webcam
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(op.hardwareMap.get(WebcamName.class, "webcam"));
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(op.hardwareMap.get(WebcamName.class, "Webcam 1"));
     }
     public void observeStick(){
         //create the pipeline
@@ -49,7 +50,7 @@ public class CVMaster {
                 //start streaming the camera
                 webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
                 //if you are using dashboard, update dashboard camera view
-                /*FtcDashboard.getInstance().startCameraStream(webcam, 5);*/
+                FtcDashboard.getInstance().startCameraStream(webcam, 5);
 
             }
 

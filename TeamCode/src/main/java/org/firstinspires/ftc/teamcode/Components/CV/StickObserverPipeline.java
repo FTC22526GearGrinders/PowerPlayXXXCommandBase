@@ -109,7 +109,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
 
 
         //release all the data
-        input.release();
+       // input.release();
         scaledThresh.copyTo(input);
         scaledThresh.release();
         scaledMask.release();
