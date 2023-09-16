@@ -57,7 +57,6 @@ public class StickObserverPipeline extends OpenCvPipeline {
         //scale the average saturation to 150
         masked.convertTo(scaledMask, -1, 150 / average.val[1], 0);
 
-
         Mat scaledThresh = new Mat();
         //you probably want to tune this
         Scalar strictLowHSV = new Scalar(0, strictLowS, 0); //strict lower bound HSV for yellow
@@ -81,26 +80,26 @@ public class StickObserverPipeline extends OpenCvPipeline {
         Imgproc.findContours(scaledThresh, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
 
-//        MatOfPoint2f approxCurve = new MatOfPoint2f();
-//        //For each contour found
-//        for (int i = 0; i < contours.size(); i++) {
-//            //Convert contours(i) from MatOfPoint to MatOfPoint2f
-//            MatOfPoint2f contour2f = new MatOfPoint2f(contours.get(i).toArray());
-//            //Processing on mMOP2f1 which is in type MatOfPoint2f
-//            double approxDistance = Imgproc.arcLength(contour2f, true) * 0.02;
-//            Imgproc.approxPolyDP(contour2f, approxCurve, approxDistance, true);
-//
-//            //Convert back to MatOfPoint
-//            MatOfPoint points = new MatOfPoint(approxCurve.toArray());
-//
-//            // Get bounding rect of contour
-//            Rect rect = Imgproc.boundingRect(points);
-//
-//            // draw enclosing rectangle (all same color, but you could use variable i to make them unique)
-//
-//            new Point(rect.x + rect.width, rect.y + rect.height);
-//            new Scalar(255, 0, 0);
-//        }
+        MatOfPoint2f approxCurve = new MatOfPoint2f();
+        //For each contour found
+        for (int i = 0; i < contours.size(); i++) {
+            //Convert contours(i) from MatOfPoint to MatOfPoint2f
+            MatOfPoint2f contour2f = new MatOfPoint2f(contours.get(i).toArray());
+            //Processing on mMOP2f1 which is in type MatOfPoint2f
+            double approxDistance = Imgproc.arcLength(contour2f, true) * 0.02;
+            Imgproc.approxPolyDP(contour2f, approxCurve, approxDistance, true);
+
+            //Convert back to MatOfPoint
+            MatOfPoint points = new MatOfPoint(approxCurve.toArray());
+
+            // Get bounding rect of contour
+            Rect rect = Imgproc.boundingRect(points);
+
+            // draw enclosing rectangle (all same color, but you could use variable i to make them unique)
+
+            new Point(rect.x + rect.width, rect.y + rect.height);
+            new Scalar(255, 0, 0);
+        }
 
         //list of frames to reduce inconsistency, not too many so that it is still real-time, change the number from 5 if you want
         if (frameList.size() > 5) {

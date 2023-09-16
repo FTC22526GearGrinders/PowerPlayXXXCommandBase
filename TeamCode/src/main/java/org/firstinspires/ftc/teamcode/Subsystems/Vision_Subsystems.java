@@ -1,21 +1,13 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 
-import android.app.ActivityManager;
-import android.os.DropBoxManager;
-
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
-
-import java.util.List;
 
 
 public class Vision_Subsystems extends SubsystemBase {
