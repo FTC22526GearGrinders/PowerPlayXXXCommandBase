@@ -26,7 +26,8 @@ import org.openftc.easyopencv.OpenCvWebcam;
  *
  * */
 public class LookForTeamProp extends CommandBase {
-    private OpenCvWebcam webcam;
+
+    private OpenCvWebcam webcam;// I can see your icon
     final int RESOLUTION_WIDTH = 640;
     final int RESOLUTION_HEIGHT = 480;
 
@@ -136,13 +137,23 @@ public class LookForTeamProp extends CommandBase {
 
     @Override
     public void execute() {
-        int currentArea = sptop.getArea();
 
-        if(currentArea > tapeSeenArea)
-            tapeSeen = true;
+        int numberOfContours = sptop.getNumberOfContoursSeen();
 
-        if (currentArea > propSeenArea)
-            propSeen = true;
+
+        double area0 = sptop.getArea(0);
+
+//        if(currentArea > tapeSeenArea)
+//            tapeSeen = true;
+//
+//        if (currentArea > propSeenArea)
+//            propSeen = true;
+
+        myOpMode.telemetry.addData("RawContours", sptop.getNumberOfRawContoursSeen());
+        myOpMode.telemetry.addData("ValidContours", numberOfContours);
+        myOpMode.telemetry.addData("Area0",area0);
+
+        myOpMode.telemetry.update();
 
     }
 

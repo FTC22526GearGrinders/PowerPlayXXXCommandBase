@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode.Components.CV;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 //for dashboard
@@ -18,10 +20,15 @@ public class SpikeTapeObserverPipeline extends OpenCvPipeline {
     //backlog of frames to average out to reduce noise
     ArrayList<double[]> frameList;
     //these are public static to be tuned in dashboard
-    public static double strictLowS = 140;
-    public static double strictHighS = 255;
+//    public static double strictLowS = 140;
+//    public static double strictHighS = 255;
 
     Rect currentCrop;
+
+    double minArea = 100;
+
+    double[] areas = {0, 0, 0, 0};
+    private int numberOfRawContours;
 
     public SpikeTapeObserverPipeline(Rect currentCrop) {
         this.currentCrop = currentCrop;
@@ -31,9 +38,8 @@ public class SpikeTapeObserverPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
 
-        Mat uncropped = input;
 
-        Mat cropped = new Mat(uncropped, currentCrop);
+        Mat cropped = new Mat(input, currentCrop);
 
         Mat mat = new Mat();
 
@@ -43,6 +49,11 @@ public class SpikeTapeObserverPipeline extends OpenCvPipeline {
             return input;
         }
 
+        /*
+         * Limits for both red ranges
+         *
+         * */
+
         Mat lower_red_hue_range = new Mat();
         Mat upper_red_hue_range = new Mat();
         Scalar a = new Scalar(0, 100, 100);
@@ -50,56 +61,45 @@ public class SpikeTapeObserverPipeline extends OpenCvPipeline {
         Scalar c = new Scalar(160, 100, 100);
         Scalar d = new Scalar(179, 255, 255);
 
-        Core.inRange(cropped, a, b, lower_red_hue_range);
+        //lower range
 
+        Core.inRange(cropped, a, b, lower_red_hue_range);
+//upper range
         Core.inRange(cropped, c, d, upper_red_hue_range);
 
-
+//final Mat for combined red masking
         Mat red_hue_masked = new Mat();
 
         Core.addWeighted(lower_red_hue_range, 1.0, upper_red_hue_range, 1.0, 0.0, red_hue_masked);
 
+        //contours, apply post processing to information
         List<MatOfPoint> contours = new ArrayList<>();
-
         Mat hierarchy = new Mat();
         //find contours, input scaledThresh because it has hard edges
 
+        //find contours, input scaledThresh because it has hard edges
         Imgproc.findContours(red_hue_masked, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        List<MatOfPoint> contoursa = new ArrayList<MatOfPoint>();
-        Imgproc.findContours(red_hue_masked, contoursa, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-        double maxArea = -1;
-        int maxAreaIdx = -1;
-        for (int idx = 0; idx < contours.size(); idx++) {
-            Mat contour = contours.get(idx);
-            double contourarea = Imgproc.contourArea(contour);
-            if (contourarea > maxArea) {
-                maxArea = contourarea;
-                maxAreaIdx = idx;
-            }
-        }
 
-//        MatOfPoint2f approxCurve = new MatOfPoint2f();
-//        //For each contour found
-//        for (int i = 0; i < contours.size(); i++) {
-//            //Convert contours(i) from MatOfPoint to MatOfPoint2f
-//            MatOfPoint2f contour2f = new MatOfPoint2f(contours.get(i).toArray());
-//            //Processing on mMOP2f1 which is in type MatOfPoint2f
-//            double approxDistance = Imgproc.arcLength(contour2f, true) * 0.02;
-//
-//            Imgproc.approxPolyDP(contour2f, approxCurve, approxDistance, true);
-//
-//            //Convert back to MatOfPoint
-//            MatOfPoint points = new MatOfPoint(approxCurve.toArray());
-//
-//            // Get bounding rect of contour
-//            Rect rect = Imgproc.boundingRect(points);
-//
-//            // draw enclosing rectangle (all same color, but you could use variable i to make them unique)
-//
-//            new Point(rect.x + rect.width, rect.y + rect.height);
-//            new Scalar(255, 0, 0);
-        //    }
+        MatOfPoint2f approxCurve = new MatOfPoint2f();
+        //For each contour found
+        numberOfRawContours = contours.size();
+
+        for (int i = 0; i < numberOfRawContours; i++) {
+            //Convert contours(i) from MatOfPoint to MatOfPoint2f
+            MatOfPoint2f contour2f = new MatOfPoint2f(contours.get(i));
+            //Processing on mMOP2f1 which is in type MatOfPoint2f
+            double area = Imgproc.contourArea(contour2f);
+            //check for > min area to eliminate small false conntours
+            if (area < minArea) break;
+            //save valid area
+            contour2f.toArray();
+
+            areas[i] = area;
+        }
+        if (areas.length > 1)
+            Arrays.sort(areas);
+
 
         //list of frames to reduce inconsistency, not too many so that it is still real-time, change the number from 5 if you want
         if (frameList.size() > 5) {
@@ -122,7 +122,18 @@ public class SpikeTapeObserverPipeline extends OpenCvPipeline {
     }
 
     //return contour area to look command
-    public int getArea() {
-        return 911;
+    public double getArea(int n) {
+        return areas[n];
+    }
+
+    //return number of contours seen
+
+    public int getNumberOfContoursSeen() {
+        return areas.length;
+    }
+
+
+    public int getNumberOfRawContoursSeen() {
+        return numberOfRawContours;
     }
 }
